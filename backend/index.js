@@ -20,6 +20,61 @@ let swaggerClient; // Initialized in init()
 
 app.use(bodyparser.json());
 
+app.post('/api/contract/:address/reviewBook', async (req, res) => {
+  try {
+    let postRes = await swaggerClient.apis.default.reviewBook_post({
+      address: req.params.address,
+      body: {
+        bookId: req.body.bookId,
+        stars: req.body.stars
+      },
+      "kld-from": FROM_ADDRESS,
+      "kld-sync": "true"
+    });
+    res.status(200).send(postRes.body)
+  }
+  catch(err) {
+    res.status(500).send({error: `${err.response && JSON.stringify(err.response.body) && err.response.text}\n${err.stack}`});
+  }
+});
+
+app.get('/api/contract/:address/getAllBooks', async (req, res) => {
+  // console.log("getBooks api");
+  try {
+    // console.log("req: ", req.params.address)
+    let getRes = await swaggerClient.apis.default.getAllBooks_get({
+      address: req.params.address,
+      body: {
+        books: req.body.bookList
+      },
+      "kld-from": FROM_ADDRESS,
+      "kld-sync": "true"
+    });
+    res.status(200).send(getRes.body)
+  }
+  catch(err) {
+    res.status(500).send({error: `${err.response && JSON.stringify(err.response.body) && err.response.text}\n${err.stack}`});
+  }
+});
+
+app.get('/api/contract/:address/getBook/:key', async (req, res) => {
+  try {
+    let getRes = await swaggerClient.apis.default.getBook_get({
+      address: req.params.address,
+      body: {
+        books: req.body.x
+      },
+      key: req.params.key,
+      "kld-from": FROM_ADDRESS,
+      "kld-sync": "true"
+    });
+    res.status(200).send(getRes.body)
+  }
+  catch(err) {
+    res.status(500).send({error: `${err.response && JSON.stringify(err.response.body) && err.response.text}\n${err.stack}`});
+  }
+});
+
 app.post('/api/contract', async (req, res) => {
   // Note: we really only want to deploy a new instance of the contract
   //       when we are initializing our on-chain state for the first time.
@@ -38,40 +93,6 @@ app.post('/api/contract', async (req, res) => {
   }
   catch(err) {
     res.status(500).send({error: `${err.response && JSON.stringify(err.response.body)}\n${err.stack}`});
-  }
-});
-
-app.post('/api/contract/:address/value', async (req, res) => {
-  try {
-    let postRes = await swaggerClient.apis.default.set_post({
-      address: req.params.address,
-      body: {
-        x: req.body.x
-      },
-      "kld-from": FROM_ADDRESS,
-      "kld-sync": "true"
-    });
-    res.status(200).send(postRes.body)
-  }
-  catch(err) {
-    res.status(500).send({error: `${err.response && JSON.stringify(err.response.body) && err.response.text}\n${err.stack}`});
-  }
-});
-
-app.get('/api/contract/:address/value', async (req, res) => {
-  try {
-    let postRes = await swaggerClient.apis.default.get_get({
-      address: req.params.address,
-      body: {
-        x: req.body.x
-      },
-      "kld-from": FROM_ADDRESS,
-      "kld-sync": "true"
-    });
-    res.status(200).send(postRes.body)
-  }
-  catch(err) {
-    res.status(500).send({error: `${err.response && JSON.stringify(err.response.body) && err.response.text}\n${err.stack}`});
   }
 });
 
