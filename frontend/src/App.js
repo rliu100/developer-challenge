@@ -15,7 +15,7 @@ function App() {
   const [currentBook, setCurrentBook] = useState(null);
   // const [stars, setStars] = useState(null);
   const [userReview, setUserReview] = useState(null);
-  // const [deployState, setDeployState] = useState("Deploy");
+  const [deployState, setDeployState] = useState("Deploy");
 
   useEffect(() => {
     start()
