@@ -5,32 +5,24 @@ import Book from './components/Book.js';
 import { Rate, Select, Row, Col } from 'antd';
 
 function App() {
-  const [loadedBooks, setLoadedBooks] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [books, setBooks] = useState([null, null, null, null, null]);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [contractAddress, setContractAddress] = useState(null);
+  // Books
+  const [loadedBooks, setLoadedBooks] = useState(false);
+  const [books, setBooks] = useState([null, null, null, null, null]);
   // For reviews
-  const [uploadReviewState, setUploadReviewState] = useState("");
   const [currentBook, setCurrentBook] = useState(null);
-  // const [stars, setStars] = useState(null);
   const [userReview, setUserReview] = useState(null);
-  const [deployState, setDeployState] = useState("Deploy");
 
   useEffect(() => {
-    start()
+    getAllBooks() 
   }, []);
 
-  async function start() {
-    const address = await deployContract();
-    getAllBooks(address) 
-  }
-
-  async function getAllBooks(addr=contractAddress){
+  async function getAllBooks(){
     setLoading(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(`/api/contract/${addr}/getAllBooks`);
+      const res = await fetch(`/api/getAllBooks`);
       const {bookList, error} = await res.json();
       if (!res.ok) {
         setErrorMsg(error);
@@ -44,43 +36,16 @@ function App() {
     setLoading(false);
   }
 
-  async function deployContract() {
-    setLoading(true);
-    setErrorMsg(null);
-    setDeployState("Deploying...")
-    try {
-      const res = await fetch('/api/contract', {
-        method: 'POST',
-        body: JSON.stringify({}),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      const {contractAddress : addr, error} = await res.json();
-      if (!res.ok) {
-        setErrorMsg(error)
-        setDeployState("Error! - Retry Deploy");
-      } else {
-        setContractAddress(addr);
-        setDeployState("Redeploy");
-        return addr;
-      }
-    } catch (err) {
-      setErrorMsg(err.stack)
-      setDeployState("Error! - Retry Deploy");
-    }
-    setLoading(false);
-  }
-
   async function uploadBookReview() {
     await reviewBook();
     getAllBooks();
-
   }
 
   async function reviewBook() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(`/api/contract/${contractAddress}/reviewBook`, {
+      const res = await fetch(`/api/reviewBook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -98,11 +63,11 @@ function App() {
     setLoading(false);
   }
 
-  async function getBook(key, addr=contractAddress) {
+  async function getBook(key) {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(`/api/contract/${addr}/getBook/${key}`);
+      const res = await fetch(`/api/getBook/${key}`);
       const {book, error} = await res.json();
       console.log("book: ", book);
       if (!res.ok) {
@@ -129,7 +94,6 @@ function App() {
   }
 
   function createBookList(){
-    console.log("books: ", books);
     let allBooks = books.filter(book => book !== null);
     let bookList = allBooks.map(book => {
       return (

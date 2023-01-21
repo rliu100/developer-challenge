@@ -22,8 +22,6 @@ function Book(props) {
 
   if (totalReviews !== 0){
     let averageRating = parseFloat((totalStars/totalReviews).toFixed(2));
-    // console.log("totalStars: ", totalStars);
-    // console.log("totalReviews: ", totalReviews);
     rating = `${averageRating} from ${totalReviews} reviews`;
   }
 
@@ -31,7 +29,7 @@ function Book(props) {
     <Card title={props.title} style={{ width: 380 }}>
       <p>{props.author}</p>
       <div>
-        <img height="200" src={bookCovers[id]} />
+        <img height="200" src={bookCovers[id]} alt={`${props.title} cover`}/>
       </div>
       <p>{rating}</p>
     </Card>
