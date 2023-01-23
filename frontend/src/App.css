@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
 .App {
   text-align: center;
+  font-family: "Lato" !important;
 }
 
 .App-logo {
@@ -33,10 +36,10 @@
 .App-button {
   background-color: #3842C1;
   color: #ffffff;
-  border: #ffffff solid 3px;
-  border-radius: 50px;
-  padding: 20px;
-  font-size: 25px;
+  /* border: #ffffff solid 3px; */
+  border-radius: 10px;
+  padding-bottom: 35px;
+  font-size: 20px;
   cursor: pointer;
   outline: none;
 }
@@ -57,4 +60,42 @@
   text-align: left;
   padding-left: 50px;
   padding-right: 50px;
+}
+
+/* .antd-card-title {
+  text-overflow: unset !important;
+  white-space: unset !important;
+} */
+
+/* .rating-container {
+  margin: auto;
+  width: 50%;
+} */
+
+/* .rating-select-container {
+  width: 400px;
+  display: flex;
+  column-gap: 20px;
+  justify-content: space-between;
+} */
+
+.page-title {
+  font-family: "Lato";
+  font-size: 80px;
+}
+
+.ant-card-meta-title {
+  white-space: pre-line !important;
+}
+
+.book-list-container {
+  padding-top: 30px;
+  /* padding-left: 50px; */
+  /* margin: auto; */
+  /* width: 100%; */
+  /* left: 50%; */
+  /* position: absolute; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

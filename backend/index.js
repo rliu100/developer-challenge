@@ -77,26 +77,26 @@ app.get('/api/getBook/:key', async (req, res) => {
   }
 });
 
-// app.post('/api/contract', async (req, res) => {
-//   // Note: we really only want to deploy a new instance of the contract
-//   //       when we are initializing our on-chain state for the first time.
-//   //       After that the application should keep track of the contract address.
-//   try {
-//     let postRes = await swaggerClient.apis.default.constructor_post({
-//       body: {
-//         // Here we set the constructor parameters
-//         x: req.body.x || 'initial value'
-//       },
-//       "kld-from": FROM_ADDRESS,
-//       "kld-sync": "true"
-//     });
-//     res.status(200).send(postRes.body)
-//     console.log("Deployed instance: " + postRes.body.contractAddress);
-//   }
-//   catch(err) {
-//     res.status(500).send({error: `${err.response && JSON.stringify(err.response.body)}\n${err.stack}`});
-//   }
-// });
+app.post('/api/contract', async (req, res) => {
+  // Note: we really only want to deploy a new instance of the contract
+  //       when we are initializing our on-chain state for the first time.
+  //       After that the application should keep track of the contract address.
+  try {
+    let postRes = await swaggerClient.apis.default.constructor_post({
+      body: {
+        // Here we set the constructor parameters
+        x: req.body.x || 'initial value'
+      },
+      "kld-from": FROM_ADDRESS,
+      "kld-sync": "true"
+    });
+    res.status(200).send(postRes.body)
+    console.log("Deployed instance: " + postRes.body.contractAddress);
+  }
+  catch(err) {
+    res.status(500).send({error: `${err.response && JSON.stringify(err.response.body)}\n${err.stack}`});
+  }
+});
 
 async function init() {
 
@@ -155,8 +155,9 @@ async function init() {
     "kld-from": FROM_ADDRESS,
     "kld-sync": "true"
   });
-
+  console.log("should have deployed");
   contractAddress = postRes.body.contractAddress;
+  
   console.log("Deployed instance: " + postRes.body.contractAddress);
 }
 
