@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Book from './components/Book.js';
 
@@ -13,19 +12,21 @@ import {
   Button,
   Alert,
   Space,
-  Dropdown
+  Dropdown,
+  message
 } from 'antd';
 
 function App() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [sortMethod, setSortMethod] = useState("ID");
+  const [messageApi, contextHolder] = message.useMessage();
   // Books
   const [loadedBooks, setLoadedBooks] = useState(false);
   const [books, setBooks] = useState([null, null, null, null, null]);
   // For reviews
   const [currentBook, setCurrentBook] = useState(null);
   const [userReview, setUserReview] = useState(null);
-  const [sortMethod, setSortMethod] = useState("ID");
 
   useEffect(() => {
     getAllBooks() 
@@ -70,30 +71,9 @@ function App() {
       if (!res.ok) {
         setErrorMsg(error)
       } else {
-        console.log("resetting values")
         setCurrentBook(null)
         setUserReview(null)
-      }
-    } catch(err) {
-      setErrorMsg(err.stack)
-    }
-    setLoading(false);
-  }
-
-  async function getBook(key) {
-    setLoading(true);
-    setErrorMsg(null);
-    try {
-      const res = await fetch(`/api/getBook/${key}`);
-      const {book, error} = await res.json();
-      console.log("book: ", book);
-      if (!res.ok) {
-        setErrorMsg(error);
-      } else {
-        let newBooks = [...books]
-        newBooks[key] = book;
-        setBooks(newBooks);
-        setLoadedBooks(true);
+        success()
       }
     } catch(err) {
       setErrorMsg(err.stack)
@@ -106,14 +86,11 @@ function App() {
   }
 
   function handleReviewChange(value){
-    // console.log("star value: ", value)
     setUserReview(value)
   }
 
   function createBookList(){
     let sortedBooks = sortBy(sortMethod);
-    console.log("sorted: ", sortedBooks);
-    // let sortedBooks = books;
     let allBooks = sortedBooks.filter(book => book !== null);
     let bookList = allBooks.map(book => {
       return (
@@ -134,7 +111,6 @@ function App() {
       <Row 
         gutter={[10, 10]}
         style={{width: "100%"}}
-        // gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
       >
         {bookList}
       </Row>
@@ -146,45 +122,41 @@ function App() {
     let sortedBooks = books;
     switch(key){
       case "Rating":
-        console.log("rating");
         var rating = (book) => (book.totalReviews > 0 ? book.totalStars/book.totalReviews : 0); 
         sortedBooks = books.sort((a,b)=> {
           return rating(a) > rating(b) ? -1 : 1;
         });
         break;
       case "Title":
-        console.log("title");
-        var rating = (book) => {
+        var extractTitle = (book) => {
           let title = book.title.trim()
           let firstSpace = title.indexOf(" ");
-          if (firstSpace != -1){
+          if (firstSpace !== -1){
             let firstWord = title.substring(0,firstSpace);
             return articles.includes(firstWord.toLowerCase()) ? title.substring(firstSpace+1) : title
           }
           return title;
         }; 
         sortedBooks = books.sort((a,b)=> {
-          // console.log("rating(a): ", rating(a));
-          // console.log("rating(b): ", rating(b));
-          return rating(a) > rating(b) ? 1: -1;
+          return extractTitle(a) > extractTitle(b) ? 1: -1;
         });
         break;
       case "Author":
-        var rating = (book) => {
+        var author = (book) => {
           let splitName = book.author.split(" ");
           let lastName = splitName[splitName.length -1];
           return lastName;
         }
         sortedBooks = books.sort((a,b)=> {
-          console.log("rating(a): ", rating(a));
-          console.log("rating(b): ", rating(b));
-          return rating(a) > rating(b) ? 1: -1;
+          return author(a) > author(b) ? 1: -1;
         });
         break;
       case "ID":
+        sortedBooks = books.sort((a,b) => a.id > b.id ? 1: -1);
         break;
+      default:
+        console.log("Invalid sorting method");
     }
-    // setBooks(sortedBooks)
     return sortedBooks;
   }
 
@@ -194,13 +166,21 @@ function App() {
 
   const spinnerIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const spinner = <Spin indicator={spinnerIcon} />;
-  const logoSpinner = <img src={logo} className="App-logo" alt="logo" aria-busy={loading}/>;
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Successfully submitted rating',
+      duration: 2,
+    });
+  };
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="page-title">Rate-a-Book</div>
       </header>
+      {contextHolder}
             { errorMsg && (
         <Space direction="vertical" style={{ width: 'auto' }}>
           <Alert 

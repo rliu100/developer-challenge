@@ -32,7 +32,6 @@ function Book(props) {
   return (
     <Card 
       className='antd-card-title'
-      // title={props.title} 
       cover={<img style={{objectFit: "cover"}} height="350" src={bookCovers[id]} alt={`${props.title} cover`}/>}
       style={{ width: 230 }}
     >
@@ -45,11 +44,6 @@ function Book(props) {
           </div>
         }
       />
-      {/* <p>{props.author}</p>
-      <div>
-        <img height="200" src={bookCovers[id]} alt={`${props.title} cover`}/>
-      </div>
-      <p>{rating}</p> */}
     </Card>
   )
 }
