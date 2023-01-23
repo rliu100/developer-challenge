@@ -6,6 +6,10 @@ import book3 from '../img/the_little_prince.jpeg';
 import book4 from '../img/harry_potter.jpeg';
 import book5 from "../img/Alice's_Adventures_in_Wonderland.jpeg";
 
+import '../App.css';
+
+const { Meta } = Card;
+
 function Book(props) {
   let rating = "No reviews";
   const totalReviews = parseInt(props.totalReviews)
@@ -22,16 +26,30 @@ function Book(props) {
 
   if (totalReviews !== 0){
     let averageRating = parseFloat((totalStars/totalReviews).toFixed(2));
-    rating = `${averageRating} from ${totalReviews} reviews`;
+    rating = `${averageRating} from ${totalReviews} ratings`;
   }
 
   return (
-    <Card title={props.title} style={{ width: 380 }}>
-      <p>{props.author}</p>
+    <Card 
+      className='antd-card-title'
+      // title={props.title} 
+      cover={<img style={{objectFit: "cover"}} height="300" src={bookCovers[id]} alt={`${props.title} cover`}/>}
+      style={{ width: 200 }}
+    >
+      <Meta 
+        title={props.title} 
+        description={
+          <div>
+             <p>{props.author}</p>
+             <p>{rating}</p>
+          </div>
+        }
+      />
+      {/* <p>{props.author}</p>
       <div>
         <img height="200" src={bookCovers[id]} alt={`${props.title} cover`}/>
       </div>
-      <p>{rating}</p>
+      <p>{rating}</p> */}
     </Card>
   )
 }

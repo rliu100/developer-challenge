@@ -2,7 +2,19 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Book from './components/Book.js';
-import { Rate, Select, Row, Col } from 'antd';
+
+import { LoadingOutlined } from '@ant-design/icons';
+import { 
+  Rate, 
+  Select, 
+  Row, 
+  Col, 
+  Spin,
+  Button,
+  Alert,
+  Space,
+  Dropdown
+} from 'antd';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -13,6 +25,7 @@ function App() {
   // For reviews
   const [currentBook, setCurrentBook] = useState(null);
   const [userReview, setUserReview] = useState(null);
+  // const [sortMethod, setSortMethod] = useState("ID");
 
   useEffect(() => {
     getAllBooks() 
@@ -56,6 +69,10 @@ function App() {
       const {error} = await res.json();
       if (!res.ok) {
         setErrorMsg(error)
+      } else {
+        console.log("resetting values")
+        setCurrentBook(null)
+        setUserReview(null)
       }
     } catch(err) {
       setErrorMsg(err.stack)
@@ -89,12 +106,14 @@ function App() {
   }
 
   function handleReviewChange(value){
-    console.log("star value: ", value)
+    // console.log("star value: ", value)
     setUserReview(value)
   }
 
   function createBookList(){
-    let allBooks = books.filter(book => book !== null);
+    // let sortedBooks = sortBy(sortMethod);
+    let sortedBooks = books;
+    let allBooks = sortedBooks.filter(book => book !== null);
     let bookList = allBooks.map(book => {
       return (
         <Col key={book?.id} span={8}>
@@ -111,41 +130,163 @@ function App() {
     })
 
     return (
-      <Row gutter={[10, 10]}>
+      <Row 
+        gutter={[10, 10]}
+        // gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+      >
         {bookList}
       </Row>
     )
   }
 
+  // function sortBy(key) {
+  //   const articles = ["a", "an", "the"];
+  //   let sortedBooks = books;
+  //   switch(key){
+  //     case "Rating":
+  //       var rating = (book) => (book.totalReviews > 0 ? book.totalStars/book.totalReviews : 0); 
+  //       sortedBooks = books.sort((a,b)=> {
+  //         return rating(a) > rating(b);
+  //       });
+  //       break;
+  //     case "Title":
+  //       var rating = (book) => {
+  //         let title = book.title.trim()
+  //         let firstSpace = title.indexOf(" ");
+  //         if (firstSpace != -1){
+  //           let firstWord = title.substring(0,firstSpace);
+  //           return articles.includes(firstWord) ? title.substring(firstSpace+1) : title
+  //         }
+  //         return title;
+  //       }; 
+  //       sortedBooks = books.sort((a,b)=> {
+  //         return rating(a) > rating(b);
+  //       });
+  //       break;
+  //     case "Author":
+  //       break;
+  //     case "ID":
+  //       break;
+  //   }
+  //   // setBooks(sortedBooks)
+  //   return sortedBooks;
+  // }
+
+  // function handleSortChange(key) {
+  //   setSortMethod(key);
+  // }
+
+  const spinnerIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+  const spinner = <Spin indicator={spinnerIcon} />;
+  const logoSpinner = <img src={logo} className="App-logo" alt="logo" aria-busy={loading}/>;
+  // const items = [
+  //   {
+  //     key: 0,
+  //     label: "Rating",
+  //     onClick: sortBy("Rating")
+  //   },
+  //   {
+  //     key: 1,
+  //     label: "Title",
+  //     onClick: sortBy("Title")
+  //   },
+  //   {
+  //     key: 2,
+  //     label: "Author",
+  //     onClick: sortBy("Author")
+  //   },
+  // ];
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" aria-busy={loading}/>        
-        {loadedBooks && <div>
-          <Select
-            // defaultValue={0}
-            style={{ width: 300 }}
-            onChange={handleBookChange}
-            options={books.map(book => {
-              return {
-                value: book.id,
-                label: book.title
-              }
-            })}
+        <div className="page-title">Rate-a-Book</div>
+      </header>
+            { errorMsg && (
+        <Space direction="vertical" style={{ width: 'auto' }}>
+          <Alert 
+            message={errorMsg} 
+            type="error" 
+            closable 
+            showIcon
           />
-          <Rate onChange={handleReviewChange}/>
-          <p>
-            <button type="button" className="App-button" disabled={loading || !userReview || !currentBook} onClick={uploadBookReview}>Review Book</button>
-          </p>
-        </div>}
+        </Space>          
+      )}
+      <div>
+        {loading && !loadedBooks && spinner}    
+        {loadedBooks &&  
+          <div>       
+            <div className='rating-container'>
+              <div className="rating-select-container">
+                <Select
+                  showSearch
+                  value={currentBook}
+                  placeholder="Select a book"
+                  filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) // from antd docs
+                  }
+                  style={{ width: 300, marginRight: 10 }}
+                  onChange={handleBookChange}
+                  options={books.map(book => {
+                    return {
+                      value: book.id,
+                      label: book.title
+                    }
+                  })}
+                />
+                <Rate value={userReview} onChange={handleReviewChange}/>
+              </div>           
+              <p>
+                <Button
+                  type="button" 
+                  className="App-button" 
+                  loading={loading}
+                  disabled={loading || !userReview || !currentBook} 
+                  onClick={uploadBookReview}
+                >
+                  Submit Rating
+                </Button>
+              </p>
+            </div>
+            {/* <div className="sort-container">
+              <Dropdown 
+                menu={{ 
+                  items: [
+                    {
+                      key: 0,
+                      label: "Rating",
+                      onClick: handleSortChange("Rating")
+                    },
+                    {
+                      key: 1,
+                      label: "Title",
+                      onClick: handleSortChange("Title")
+                    },
+                    {
+                      key: 2,
+                      label: "Author",
+                      onClick: handleSortChange("Author")
+                    },
+                    {
+                      key: 3,
+                      label: "ID",
+                      onClick: handleSortChange("ID")
+                    },
+                  ]
+                }} 
+                placement="bottom" 
+                arrow 
+                trigger={['click']}>
+                  <Button onClick={(e) => e.preventDefault()}>Sort By</Button>
+              </Dropdown>
+            </div> */}
+          </div>
+        }
         
-        <div>
+        <div className="book-list-container">
           {loadedBooks && createBookList()}
         </div>   
-        { errorMsg && <pre className="App-error">
-          Error: {errorMsg}
-        </pre>}
-      </header>
+      </div>
     </div>
   );
 }
