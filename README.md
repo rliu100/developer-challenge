@@ -132,7 +132,7 @@ If you want to be inspired by the Kaleido brand...
 
 This is a simple book rating app. A user can submit a 1-5 star rating for available books. A user can also sort books by Rating, Title, Author, and ID.
 
-![img](rate-a-book.png)
+![img](rate-a-book-new.png)
 ![img](ui_functionality.png)
 ![img](submit_success.png)
 

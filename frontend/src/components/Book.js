@@ -11,7 +11,7 @@ import '../App.css';
 const { Meta } = Card;
 
 function Book(props) {
-  let rating = "No reviews";
+  let rating = "No ratings";
   const totalReviews = parseInt(props.totalReviews)
   const totalStars = parseInt(props.totalStars)
   const id = parseInt(props.id)
