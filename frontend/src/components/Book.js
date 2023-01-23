@@ -26,7 +26,8 @@ function Book(props) {
 
   if (totalReviews !== 0){
     let averageRating = parseFloat((totalStars/totalReviews).toFixed(2));
-    rating = `${averageRating} from ${totalReviews} ratings`;
+    let ratingText = totalReviews === 1 ? "rating" : "ratings";
+    rating = `${averageRating} from ${totalReviews} ${ratingText}`;
   }
 
   return (
