@@ -126,3 +126,18 @@ If you want to be inspired by the Kaleido brand...
 
 ![Text Styles](StyleGuide/TextStyles.png?raw=true 'Text Styles')
 
+# Rate-a-Book
+
+### App Description
+
+A simple book rating app. Users are able to submit a 1-5 star rating for available books. Users can sort books by Rating, Title, Author, and ID.
+
+![img](rate-a-book.png)
+![img](ui_functionality.png)
+
+### Run App 
+
+Follow instructions under "Configure the config file" and "Start it up"
+
+
+

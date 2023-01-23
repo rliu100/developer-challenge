@@ -33,8 +33,8 @@ function Book(props) {
     <Card 
       className='antd-card-title'
       // title={props.title} 
-      cover={<img style={{objectFit: "cover"}} height="300" src={bookCovers[id]} alt={`${props.title} cover`}/>}
-      style={{ width: 200 }}
+      cover={<img style={{objectFit: "cover"}} height="350" src={bookCovers[id]} alt={`${props.title} cover`}/>}
+      style={{ width: 230 }}
     >
       <Meta 
         title={props.title} 

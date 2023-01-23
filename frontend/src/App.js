@@ -25,7 +25,7 @@ function App() {
   // For reviews
   const [currentBook, setCurrentBook] = useState(null);
   const [userReview, setUserReview] = useState(null);
-  // const [sortMethod, setSortMethod] = useState("ID");
+  const [sortMethod, setSortMethod] = useState("ID");
 
   useEffect(() => {
     getAllBooks() 
@@ -111,12 +111,13 @@ function App() {
   }
 
   function createBookList(){
-    // let sortedBooks = sortBy(sortMethod);
-    let sortedBooks = books;
+    let sortedBooks = sortBy(sortMethod);
+    console.log("sorted: ", sortedBooks);
+    // let sortedBooks = books;
     let allBooks = sortedBooks.filter(book => book !== null);
     let bookList = allBooks.map(book => {
       return (
-        <Col key={book?.id} span={8}>
+        <Col key={book?.id} span={6}>
           <Book 
             title={book?.title} 
             author={book?.author}
@@ -132,6 +133,7 @@ function App() {
     return (
       <Row 
         gutter={[10, 10]}
+        style={{width: "100%"}}
         // gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
       >
         {bookList}
@@ -139,63 +141,60 @@ function App() {
     )
   }
 
-  // function sortBy(key) {
-  //   const articles = ["a", "an", "the"];
-  //   let sortedBooks = books;
-  //   switch(key){
-  //     case "Rating":
-  //       var rating = (book) => (book.totalReviews > 0 ? book.totalStars/book.totalReviews : 0); 
-  //       sortedBooks = books.sort((a,b)=> {
-  //         return rating(a) > rating(b);
-  //       });
-  //       break;
-  //     case "Title":
-  //       var rating = (book) => {
-  //         let title = book.title.trim()
-  //         let firstSpace = title.indexOf(" ");
-  //         if (firstSpace != -1){
-  //           let firstWord = title.substring(0,firstSpace);
-  //           return articles.includes(firstWord) ? title.substring(firstSpace+1) : title
-  //         }
-  //         return title;
-  //       }; 
-  //       sortedBooks = books.sort((a,b)=> {
-  //         return rating(a) > rating(b);
-  //       });
-  //       break;
-  //     case "Author":
-  //       break;
-  //     case "ID":
-  //       break;
-  //   }
-  //   // setBooks(sortedBooks)
-  //   return sortedBooks;
-  // }
+  function sortBy(key) {
+    const articles = ["a", "an", "the"];
+    let sortedBooks = books;
+    switch(key){
+      case "Rating":
+        console.log("rating");
+        var rating = (book) => (book.totalReviews > 0 ? book.totalStars/book.totalReviews : 0); 
+        sortedBooks = books.sort((a,b)=> {
+          return rating(a) > rating(b) ? -1 : 1;
+        });
+        break;
+      case "Title":
+        console.log("title");
+        var rating = (book) => {
+          let title = book.title.trim()
+          let firstSpace = title.indexOf(" ");
+          if (firstSpace != -1){
+            let firstWord = title.substring(0,firstSpace);
+            return articles.includes(firstWord.toLowerCase()) ? title.substring(firstSpace+1) : title
+          }
+          return title;
+        }; 
+        sortedBooks = books.sort((a,b)=> {
+          // console.log("rating(a): ", rating(a));
+          // console.log("rating(b): ", rating(b));
+          return rating(a) > rating(b) ? 1: -1;
+        });
+        break;
+      case "Author":
+        var rating = (book) => {
+          let splitName = book.author.split(" ");
+          let lastName = splitName[splitName.length -1];
+          return lastName;
+        }
+        sortedBooks = books.sort((a,b)=> {
+          console.log("rating(a): ", rating(a));
+          console.log("rating(b): ", rating(b));
+          return rating(a) > rating(b) ? 1: -1;
+        });
+        break;
+      case "ID":
+        break;
+    }
+    // setBooks(sortedBooks)
+    return sortedBooks;
+  }
 
-  // function handleSortChange(key) {
-  //   setSortMethod(key);
-  // }
+  function handleSortChange(key) {
+    setSortMethod(key);
+  }
 
   const spinnerIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const spinner = <Spin indicator={spinnerIcon} />;
   const logoSpinner = <img src={logo} className="App-logo" alt="logo" aria-busy={loading}/>;
-  // const items = [
-  //   {
-  //     key: 0,
-  //     label: "Rating",
-  //     onClick: sortBy("Rating")
-  //   },
-  //   {
-  //     key: 1,
-  //     label: "Title",
-  //     onClick: sortBy("Title")
-  //   },
-  //   {
-  //     key: 2,
-  //     label: "Author",
-  //     onClick: sortBy("Author")
-  //   },
-  // ];
 
   return (
     <div className="App">
@@ -248,43 +247,46 @@ function App() {
                 </Button>
               </p>
             </div>
-            {/* <div className="sort-container">
+            <div className="sort-container">
               <Dropdown 
                 menu={{ 
                   items: [
                     {
                       key: 0,
                       label: "Rating",
-                      onClick: handleSortChange("Rating")
+                      onClick: (e) => {handleSortChange("Rating");}
                     },
                     {
                       key: 1,
                       label: "Title",
-                      onClick: handleSortChange("Title")
+                      onClick: (e) => {handleSortChange("Title");}
                     },
                     {
                       key: 2,
                       label: "Author",
-                      onClick: handleSortChange("Author")
+                      onClick: (e) => {handleSortChange("Author");}
                     },
                     {
                       key: 3,
                       label: "ID",
-                      onClick: handleSortChange("ID")
+                      onClick: (e) => {handleSortChange("ID");}
                     },
                   ]
                 }} 
                 placement="bottom" 
                 arrow 
                 trigger={['click']}>
-                  <Button onClick={(e) => e.preventDefault()}>Sort By</Button>
+                  <Button className="App-button" onClick={(e) => e.preventDefault()}>Sort By</Button>
               </Dropdown>
-            </div> */}
+            </div>
           </div>
         }
         
         <div className="book-list-container">
-          {loadedBooks && createBookList()}
+          {loadedBooks && 
+            <div className="books-list">
+              {createBookList()}
+            </div>}
         </div>   
       </div>
     </div>
